@@ -30,7 +30,7 @@ function createUser(user) {
 
 // 如果驗證未通過, 會中斷父層 function 接下來的邏輯, 可使用 try catch 接住
 function validateUserInput({ email, password }) {
-  if (isEmpty(email) || !isEmail(email) || isEmpty(password)) {
+  if (!isEmail(email) || isEmpty(password)) {
     throw new Error("Invalid input!");
   }
 }
@@ -40,7 +40,7 @@ function isEmpty(value) {
 }
 
 function isEmail(email) {
-  return email.includes("@");
+  return !isEmpty(email) && email.includes("@");
 }
 
 function showErrorMessage(message) {
@@ -52,4 +52,4 @@ function saveUser(user) {
   console.log("save user", user);
 }
 
-handleCreateUserRequest({ email: "emailgmail.com", password: "12345" });
+handleCreateUserRequest({ email: "email@gmail.com", password: "12345" });
