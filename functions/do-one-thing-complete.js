@@ -14,6 +14,17 @@
 // } else {
 //   saveNewUser(email);
 // }
+class User {
+  constructor(user) {
+    this.email = user.email;
+    this.password = user.password;
+  }
+
+  save() {
+    // database.insert(this);
+    console.log("save user", this);
+  }
+}
 
 function handleCreateUserRequest(user) {
   try {
@@ -47,9 +58,9 @@ function showErrorMessage(message) {
   console.error(message);
 }
 
-function saveUser(user) {
-  // database.insert(user);
-  console.log("save user", user);
+function saveUser(userObj) {
+  const user = new User(userObj);
+  user.save();
 }
 
 handleCreateUserRequest({ email: "email@gmail.com", password: "12345" });
