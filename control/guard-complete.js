@@ -1,3 +1,19 @@
+const METHOD = {
+  CREDIT_CARD: "CREDIT_CARD",
+  PAYPAL: "PAYPAL",
+  PLAN: "PLAN"
+};
+
+const TYPE = {
+  PAYMENT: "PAYMENT",
+  REFUND: "REFUND"
+};
+
+const STATUS = {
+  OPEN: "OPEN",
+  CLOSED: "CLOSED"
+};
+
 main();
 
 function main() {
@@ -83,17 +99,17 @@ function getTransactionProcessor(transaction) {
     processRefund: null
   };
 
-  if (usesTransactionMethod(transaction, "CREDIT_CARD")) {
+  if (usesTransactionMethod(transaction, METHOD.CREDIT_CARD)) {
     processors.processPayment = processCreditCardPayment;
     processors.processRefund = processCreditCardRefund;
   }
 
-  if (usesTransactionMethod(transaction, "PAYPAL")) {
+  if (usesTransactionMethod(transaction, METHOD.PAYPAL)) {
     processors.processPayment = processPayPalPayment;
     processors.processRefund = processPayPalRefund;
   }
 
-  if (usesTransactionMethod(transaction, "PLAN")) {
+  if (usesTransactionMethod(transaction, METHOD.PLAN)) {
     processors.processPayment = processPlanPayment;
     processors.processRefund = processPlanRefund;
   }
@@ -106,15 +122,15 @@ function usesTransactionMethod(transaction, method) {
 }
 
 function isOpen(transaction) {
-  return transaction.status === "OPEN";
+  return transaction.status === STATUS.OPEN;
 }
 
 function isPayment(transaction) {
-  return transaction.type === "PAYMENT";
+  return transaction.type === TYPE.PAYMENT;
 }
 
 function isRefund(transaction) {
-  return transaction.type === "REFUND";
+  return transaction.type === TYPE.REFUND;
 }
 
 function isEmpty(transactions) {
