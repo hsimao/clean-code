@@ -53,17 +53,11 @@ function validateTransactions(transactions) {
 
 function processTransaction(transaction) {
   validateTransaction(transaction);
-
-  if (usesTransactionMethod(transaction, "CREDIT_CARD"))
-    processCreditCardTransaction(transaction);
-  if (usesTransactionMethod(transaction, "PAYPAL"))
-    processPayPalTransaction(transaction);
-  if (usesTransactionMethod(transaction, "PLAN"))
-    processPlanTransaction(transaction);
+  processByMethod(transaction);
 }
 
 function validateTransaction(transaction) {
-  if (!isOpen([transaction])) {
+  if (!isOpen(transaction)) {
     throw new Error("Invalid transaction type.");
   }
 
@@ -72,6 +66,15 @@ function validateTransaction(transaction) {
     error.item = transaction;
     throw error;
   }
+}
+
+function processByMethod(transaction) {
+  if (usesTransactionMethod(transaction, "CREDIT_CARD"))
+    processCreditCardTransaction(transaction);
+  if (usesTransactionMethod(transaction, "PAYPAL"))
+    processPayPalTransaction(transaction);
+  if (usesTransactionMethod(transaction, "PLAN"))
+    processPlanTransaction(transaction);
 }
 
 function usesTransactionMethod(transaction, method) {
