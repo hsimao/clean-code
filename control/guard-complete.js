@@ -31,22 +31,28 @@ function main() {
       amount: "15.99"
     }
   ];
-
-  processTransactions(transactions);
+  try {
+    processTransactions(transactions);
+  } catch (error) {
+    showErrorMessage(error.message, error.item);
+  }
 }
 
 function processTransactions(transactions) {
-  if (isEmpty(transactions)) {
-    return showErrorMessage("No transactions provided");
-  }
-
+  validateTransactions(transactions);
   transactions.forEach((transaction) => processTransaction(transaction));
 }
 
-function processTransaction(transaction) {
-  if (!isOpen(transaction)) {
-    return showErrorMessage("Invalid transaction type!");
+function validateTransactions(transactions) {
+  if (isEmpty(transactions)) {
+    const error = new Error("No transactions provided!");
+    error.code = 1;
+    throw error;
   }
+}
+
+function processTransaction(transaction) {
+  validateTransaction(transaction);
 
   if (usesTransactionMethod(transaction, "CREDIT_CARD"))
     processCreditCardTransaction(transaction);
@@ -54,6 +60,18 @@ function processTransaction(transaction) {
     processPayPalTransaction(transaction);
   if (usesTransactionMethod(transaction, "PLAN"))
     processPlanTransaction(transaction);
+}
+
+function validateTransaction(transaction) {
+  if (!isOpen([transaction])) {
+    throw new Error("Invalid transaction type.");
+  }
+
+  if (!isPayment(transaction) && !isRefund(transaction)) {
+    const error = new Error("Invalid transaction type!");
+    error.item = transaction;
+    throw error;
+  }
 }
 
 function usesTransactionMethod(transaction, method) {
@@ -80,13 +98,11 @@ function processCreditCardTransaction(transaction) {
 function processPayPalTransaction(transaction) {
   if (isPayment(transaction)) return processPayPalPayment(transaction);
   if (isRefund(transaction)) return processPayPalRefund(transaction);
-  showErrorMessage("Invalid transaction type!", transaction);
 }
 
 function processPlanTransaction(transaction) {
-  if (isPayment(transaction)) return processPlanPayment();
-  if (isRefund(transaction)) return processPlanRefund();
-  showErrorMessage("Invalid transaction type!", transaction);
+  if (isPayment(transaction)) return processPlanPayment(transaction);
+  if (isRefund(transaction)) return processPlanRefund(transaction);
 }
 
 function isEmpty(transactions) {
